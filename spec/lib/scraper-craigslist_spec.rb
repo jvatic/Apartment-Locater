@@ -18,6 +18,10 @@ describe Scraper::Craigslist do
     @sample4 = Scraper::Craigslist.new
     @sample4.doc = Nokogiri::HTML( html_fixture(:craigslist4) )
     @sample4.parse!
+
+    @sample5 = Scraper::Craigslist.new
+    @sample5.doc = Nokogiri::HTML( html_fixture(:craigslist5) )
+    @sample5.parse!
   end
 
   it "should parse email address" do
@@ -32,6 +36,13 @@ describe Scraper::Craigslist do
     @sample2.attributes[:phone].should == '647.706.8245'
     @sample3.attributes[:phone].should be_nil
     @sample4.attributes[:phone].should == '416-707-7815'
+    @sample5.attributes[:phone].should == '(416) 767-2834'
+
+    @sample6 = Scraper::Craigslist.new
+    @sample6.doc = Nokogiri::HTML( html_fixture(:craigslist6) )
+    @sample6.parse!
+
+    @sample6.attributes[:phone].should == '416 531 7299'
   end
 
   it "should parse avilability" do
@@ -46,6 +57,9 @@ describe Scraper::Craigslist do
 
     @sample4.attributes[:available].should be_nil
     @sample4.attributes[:available_date].should be_nil
+
+    @sample5.attributes[:available].should == "February 19th"
+    @sample5.attributes[:available_date].should == Date.strptime("19/02/2012", "%d/%m/%Y")
   end
 
   it "should parse price" do
@@ -53,6 +67,7 @@ describe Scraper::Craigslist do
     @sample2.attributes[:price].should be_nil
     @sample3.attributes[:price].should == 795
     @sample4.attributes[:price].should == 1200
+    @sample5.attributes[:price].should == 985
   end
 
   it "should parse square footage" do
@@ -60,6 +75,7 @@ describe Scraper::Craigslist do
     @sample2.attributes[:square_footage].should be_nil
     @sample3.attributes[:square_footage].should == 375
     @sample4.attributes[:square_footage].should == 375
+    @sample5.attributes[:square_footage].should be_nil
   end
 
   it "should parse # of bedrooms" do
@@ -67,6 +83,7 @@ describe Scraper::Craigslist do
     @sample2.attributes[:bedrooms].should == 1
     @sample3.attributes[:bedrooms].should == 0
     @sample4.attributes[:bedrooms].should == 0
+    @sample5.attributes[:bedrooms].should == 1
   end
 
   it "should parse ensuite laundry" do
@@ -74,6 +91,7 @@ describe Scraper::Craigslist do
     @sample2.attributes[:ensuite_landry].should be_true
     @sample3.attributes[:ensuite_landry].should be_true
     @sample4.attributes[:ensuite_landry].should be_true
+    @sample5.attributes[:ensuite_landry].should be_true
   end
 
   it "should parse address" do

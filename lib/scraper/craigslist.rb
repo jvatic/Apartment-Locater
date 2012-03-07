@@ -17,19 +17,20 @@ module Scraper
 
     def parse!
       email = @doc.xpath("//a[starts-with(@href, 'mailto')]").first
-      @attributes[:email] = email.text
+      @attributes[:email] = email.text if email
 
       full_text = @doc.text
 
-      if phone = full_text.scan(/\d{3}[.-]\d{3}[.-]\d{4}/)
+      if phone = full_text.scan(/\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/)
         @attributes[:phone] = phone.first
       end
 
-      if available = full_text.scan(/available ([^,\n]+)/i).flatten.first
+      if available = full_text.scan(/available ([^-~.$!,\n]+)/i).flatten.first
         @attributes[:available] = available
         @attributes[:available_date] = parse_date(available)
 
-        @attributes[:available] = nil if !@attributes[:available_date] && !(available =~ /immediately/i)
+        @attributes[:available] = nil unless @attributes[:available_date]
+        @attributes[:available] = "immediately" if available =~ /immediately/i
       end
 
       @attributes[:ensuite_landry] = !full_text.scan(/washer\s*(?:and|\/|&|,)\s*dryer/i).empty?
@@ -52,7 +53,7 @@ module Scraper
 
       @attributes[:address] = @doc.xpath("//comment()").select { |n| n.text =~ /^\s*CLTAG/ }.inject({}) { |memo, data|
         key, val = data.text.scan(/(\w+)=([.\w\s]+)/).flatten
-        memo[key.to_sym] = val.sub(/\s*$/, '')
+        memo[key.to_sym] = val.sub(/\s*$/, '') if key
         memo
       }
 
@@ -68,7 +69,7 @@ module Scraper
 
       day = (1..31).select { |i|
         string.scan(i.to_s).first
-      }.first
+      }.last
 
       year = Time.now.year
 
