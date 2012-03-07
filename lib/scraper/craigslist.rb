@@ -21,17 +21,18 @@ module Scraper
 
       full_text = @doc.text
 
-      if phone = full_text.scan(/\d{3}-\d{3}-\d{4}/)
+      if phone = full_text.scan(/\d{3}[.-]\d{3}[.-]\d{4}/)
         @attributes[:phone] = phone.first
       end
 
-      if available = full_text.scan(/available ([^,\n]+)/i)
-        available = available.flatten.first
+      if available = full_text.scan(/available ([^,\n]+)/i).flatten.first
         @attributes[:available] = available
         @attributes[:available_date] = parse_date(available)
+
+        @attributes[:available] = nil unless @attributes[:available_date] || available =~ /immediately/i
       end
 
-      @attributes[:ensuite_landry] = !full_text.scan(/washer\s*(?:and|\/|&)\s*dryer/).empty?
+      @attributes[:ensuite_landry] = !full_text.scan(/washer\s*(?:and|\/|&|,)\s*dryer/).empty?
 
       if price = full_text.scan(/\$[.,\d]+/).first
         @attributes[:price] = price.gsub(/[^.\d]/, '').to_f
@@ -48,7 +49,7 @@ module Scraper
       @attributes[:body_html] = @doc.css("#userbody").to_html
 
       @attributes[:address] = @doc.xpath("//comment()").select { |n| n.text =~ /^\s*CLTAG/ }.inject({}) { |memo, data|
-        key, val = data.text.scan(/(\w+)=([\w\s]+)/).flatten
+        key, val = data.text.scan(/(\w+)=([.\w\s]+)/).flatten
         memo[key.to_sym] = val.sub(/\s*$/, '')
         memo
       }
@@ -68,6 +69,8 @@ module Scraper
       }.first
 
       year = Time.now.year
+
+      return nil unless month && day
 
       Date.strptime("#{day}/#{month}/#{year}", "%d/%B/%Y")
     end

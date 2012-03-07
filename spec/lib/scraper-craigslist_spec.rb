@@ -3,53 +3,78 @@ require File.join( File.dirname(File.expand_path(__FILE__)), '..', '..', 'lib/sc
 
 describe Scraper::Craigslist do
   before do
-    @scraper = Scraper::Craigslist.new
-    @scraper.doc = Nokogiri::HTML( html_fixture(:craigslist) )
-    @scraper.parse!
+    @sample1 = Scraper::Craigslist.new
+    @sample1.doc = Nokogiri::HTML( html_fixture(:craigslist) )
+    @sample1.parse!
+
+    @sample2 = Scraper::Craigslist.new
+    @sample2.doc = Nokogiri::HTML( html_fixture(:craigslist2) )
+    @sample2.parse!
   end
 
   it "should parse email address" do
-    @scraper.attributes[:email].should == 'qkgxj-2877696803@hous.craigslist.org'
+    @sample1.attributes[:email].should == 'qkgxj-2877696803@hous.craigslist.org'
+    @sample2.attributes[:email].should == 'gzmch-2880994574@hous.craigslist.org'
   end
 
   it "should parse phone number" do
-    @scraper.attributes[:phone].should == '416-400-5892'
+    @sample1.attributes[:phone].should == '416-400-5892'
+    @sample2.attributes[:phone].should == '647.706.8245'
   end
 
   it "should parse avilability" do
-    @scraper.attributes[:available].should == "April 1st or earlier"
-    @scraper.attributes[:available_date].should == Date.strptime("01/04/2012", "%d/%m/%Y")
+    @sample1.attributes[:available].should == "April 1st or earlier"
+    @sample1.attributes[:available_date].should == Date.strptime("01/04/2012", "%d/%m/%Y")
+
+    @sample2.attributes[:available].should be_nil
+    @sample2.attributes[:available_date].should be_nil
   end
 
   it "should parse price" do
-    @scraper.attributes[:price].should == 1200
+    @sample1.attributes[:price].should == 1200
+    @sample2.attributes[:price].should be_nil
   end
 
   it "should parse square footage" do
-    @scraper.attributes[:square_footage].should == 700
+    @sample1.attributes[:square_footage].should == 700
+    @sample2.attributes[:square_footage].should be_nil
   end
 
   it "should parse # of bedrooms" do
-    @scraper.attributes[:bedrooms].should == 1
+    @sample1.attributes[:bedrooms].should == 1
+    @sample2.attributes[:bedrooms].should == 1
   end
 
   it "should parse ensuite laundry" do
-    @scraper.attributes[:ensuite_landry].should be_true
+    @sample1.attributes[:ensuite_landry].should be_true
+    @sample2.attributes[:ensuite_landry].should be_true
   end
 
   it "should parse address" do
-    @scraper.attributes[:address][:xstreet0].should       == "Logan Avenue"
-    @scraper.attributes[:address][:xstreet1].should       == "Danforth and Logan"
-    @scraper.attributes[:address][:city].should           == "Toronto"
-    @scraper.attributes[:address][:region].should         == "ONT"
-    @scraper.attributes[:address][:GeographicArea].should == "Danforth and Logan"
+    @sample1.attributes[:address][:xstreet0].should       == "Logan Avenue"
+    @sample1.attributes[:address][:xstreet1].should       == "Danforth and Logan"
+    @sample1.attributes[:address][:city].should           == "Toronto"
+    @sample1.attributes[:address][:region].should         == "ONT"
+    @sample1.attributes[:address][:GeographicArea].should == "Danforth and Logan"
+
+    @sample2.attributes[:address][:xstreet0].should       == "1 King St. W."
+    @sample2.attributes[:address][:xstreet1].should       == "Yonge St."
+    @sample2.attributes[:address][:city].should           == "Toronto"
+    @sample2.attributes[:address][:region].should         == "ON"
+    @sample2.attributes[:address][:GeographicArea].should == "1 King St. W."
   end
 
   it "should parse image urls" do
-    @scraper.attributes[:image_urls].should == [
+    @sample1.attributes[:image_urls].should == [
       "http://images.craigslist.org/5L35G35Mc3F43Lb3Ncc3564e9bc620dcf1c9e.jpg",
       "http://images.craigslist.org/5K45F25J33mc3Ia3N4c347061422d961916a3.jpg",
       "http://images.craigslist.org/5I65L35F33n43K23N6c34abeab90b83b41729.jpg",
       "http://images.craigslist.org/5I25Na5F13Gc3M23N6c34e42b9f52827c124a.jpg"]
+
+    @sample2.attributes[:image_urls].should == [
+      "http://images.craigslist.org/5Ld5F85H63Ld3M43H1c326abb3b63327012cd.jpg",
+      "http://images.craigslist.org/5N35Kc5F33I33m03Hfc32d68ef5da62f9153c.jpg",
+      "http://images.craigslist.org/5If5N85Ge3L33Ma3Icc3243f85d404efd1796.jpg",
+      "http://images.craigslist.org/5Ie5Gb5V33Le3Jb3N7c32ba53a345452c16d6.jpg"]
   end
 end
