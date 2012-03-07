@@ -17,6 +17,7 @@ module Scraper
 
     def parse!
       @attributes[:url] = @listing_url
+      @attributes[:title] = @doc.title
 
       email = @doc.xpath("//a[starts-with(@href, 'mailto')]").first
       @attributes[:email] = email.text if email

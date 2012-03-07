@@ -11,6 +11,7 @@ class Listing
 
   property :id             , ObjectId
   property :url            , String
+  property :title          , String
   property :posted_at      , Time
   property :email          , String
   property :phone          , String
