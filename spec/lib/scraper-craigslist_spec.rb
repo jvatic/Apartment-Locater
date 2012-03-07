@@ -24,6 +24,15 @@ describe Scraper::Craigslist do
     @sample5.parse!
   end
 
+  def sample7
+    unless @sample7
+      @sample7 = Scraper::Craigslist.new
+      @sample7.doc = Nokogiri::HTML( html_fixture(:craigslist7) )
+      @sample7.parse!
+    end
+    @sample7
+  end
+
   it "should parse email address" do
     @sample1.attributes[:email].should == 'qkgxj-2877696803@hous.craigslist.org'
     @sample2.attributes[:email].should == 'gzmch-2880994574@hous.craigslist.org'
@@ -43,6 +52,7 @@ describe Scraper::Craigslist do
     @sample6.parse!
 
     @sample6.attributes[:phone].should == '416 531 7299'
+    sample7.attributes[:phone].should == '416 -- 618 4214'
   end
 
   it "should parse avilability" do
@@ -92,6 +102,7 @@ describe Scraper::Craigslist do
     @sample3.attributes[:ensuite_landry].should be_true
     @sample4.attributes[:ensuite_landry].should be_true
     @sample5.attributes[:ensuite_landry].should be_true
+    sample7.attributes[:ensuite_landry].should be_true
   end
 
   it "should parse address" do

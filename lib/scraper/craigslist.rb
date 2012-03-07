@@ -23,7 +23,7 @@ module Scraper
 
       full_text = @doc.text
 
-      if phone = full_text.scan(/\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/)
+      if phone = full_text.scan(/\(?\d{3}\)?[\s.-]+\d{3}[\s.-]+\d{4}/)
         @attributes[:phone] = phone.first
       end
 
@@ -35,7 +35,7 @@ module Scraper
         @attributes[:available] = "immediately" if available =~ /immediately/i
       end
 
-      @attributes[:ensuite_landry] = !full_text.scan(/washer\s*(?:and|\/|&|,)\s*dryer/i).empty?
+      @attributes[:ensuite_landry] = !full_text.scan(/washer\s*(?:and|\/|&|,)\s*dr[yi]er/i).empty?
 
       if price = full_text.scan(/\$[.,\d]+/).first
         @attributes[:price] = price.gsub(/[^.\d]/, '').to_f
