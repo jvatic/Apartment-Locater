@@ -38,7 +38,7 @@ module Scraper
         @attributes[:price] = price.gsub(/[^.\d]/, '').to_f
       end
 
-      if size = full_text.scan(/\d+(?=ft)/).first
+      if size = full_text.scan(/\d+(?=ft|\ssf)/i).first
         @attributes[:square_footage] = size.to_i
       end
 
