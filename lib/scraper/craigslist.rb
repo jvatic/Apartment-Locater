@@ -29,10 +29,10 @@ module Scraper
         @attributes[:available] = available
         @attributes[:available_date] = parse_date(available)
 
-        @attributes[:available] = nil unless @attributes[:available_date] || available =~ /immediately/i
+        @attributes[:available] = nil if !@attributes[:available_date] && !(available =~ /immediately/i)
       end
 
-      @attributes[:ensuite_landry] = !full_text.scan(/washer\s*(?:and|\/|&|,)\s*dryer/).empty?
+      @attributes[:ensuite_landry] = !full_text.scan(/washer\s*(?:and|\/|&|,)\s*dryer/i).empty?
 
       if price = full_text.scan(/\$[.,\d]+/).first
         @attributes[:price] = price.gsub(/[^.\d]/, '').to_f
@@ -44,6 +44,8 @@ module Scraper
 
       if bedrooms = full_text.scan(/\d(?=br)/).first
         @attributes[:bedrooms] = bedrooms.to_i
+      elsif full_text.scan(/bachelor/i).first
+        @attributes[:bedrooms] = 0
       end
 
       @attributes[:body_html] = @doc.css("#userbody").to_html

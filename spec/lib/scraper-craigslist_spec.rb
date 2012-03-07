@@ -10,16 +10,22 @@ describe Scraper::Craigslist do
     @sample2 = Scraper::Craigslist.new
     @sample2.doc = Nokogiri::HTML( html_fixture(:craigslist2) )
     @sample2.parse!
+
+    @sample3 = Scraper::Craigslist.new
+    @sample3.doc = Nokogiri::HTML( html_fixture(:craigslist3) )
+    @sample3.parse!
   end
 
   it "should parse email address" do
     @sample1.attributes[:email].should == 'qkgxj-2877696803@hous.craigslist.org'
     @sample2.attributes[:email].should == 'gzmch-2880994574@hous.craigslist.org'
+    @sample3.attributes[:email].should == 'fj9pw-2884560373@hous.craigslist.org'
   end
 
   it "should parse phone number" do
     @sample1.attributes[:phone].should == '416-400-5892'
     @sample2.attributes[:phone].should == '647.706.8245'
+    @sample3.attributes[:phone].should be_nil
   end
 
   it "should parse avilability" do
@@ -28,26 +34,33 @@ describe Scraper::Craigslist do
 
     @sample2.attributes[:available].should be_nil
     @sample2.attributes[:available_date].should be_nil
+
+    @sample3.attributes[:available].should == 'immediately'
+    @sample2.attributes[:available_date].should be_nil
   end
 
   it "should parse price" do
     @sample1.attributes[:price].should == 1200
     @sample2.attributes[:price].should be_nil
+    @sample3.attributes[:price].should == 795
   end
 
   it "should parse square footage" do
     @sample1.attributes[:square_footage].should == 700
     @sample2.attributes[:square_footage].should be_nil
+    @sample3.attributes[:square_footage].should == 375
   end
 
   it "should parse # of bedrooms" do
     @sample1.attributes[:bedrooms].should == 1
     @sample2.attributes[:bedrooms].should == 1
+    @sample3.attributes[:bedrooms].should == 0
   end
 
   it "should parse ensuite laundry" do
     @sample1.attributes[:ensuite_landry].should be_true
     @sample2.attributes[:ensuite_landry].should be_true
+    @sample3.attributes[:ensuite_landry].should be_true
   end
 
   it "should parse address" do
