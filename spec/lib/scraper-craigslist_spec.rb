@@ -12,6 +12,10 @@ describe Scraper::Craigslist do
     @samples[num]
   end
 
+  it "should parse date posted" do
+    sample(1).attributes[:posted_at].should == Time.parse("2012-03-05, 12:22PM EST")
+  end
+
   it "should parse email address" do
     sample(1).attributes[:email].should == 'qkgxj-2877696803@hous.craigslist.org'
     sample(2).attributes[:email].should == 'gzmch-2880994574@hous.craigslist.org'

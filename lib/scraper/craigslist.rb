@@ -23,6 +23,9 @@ module Scraper
 
       full_text = @doc.text
 
+      posted_at = full_text.scan(/Date:\s*([^\n]+)/).flatten.first
+      @attributes[:posted_at] = Time.parse(posted_at) if posted_at
+
       if phone = full_text.scan(/\(?\d{3}\)?[\s.-]+\d{3}[\s.-]+\d{4}/)
         @attributes[:phone] = phone.first
       end
