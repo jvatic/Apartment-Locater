@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'sinatra'
+require './database'
 require './helpers'
 
 configure :development do |config|

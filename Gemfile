@@ -5,6 +5,9 @@ gem 'sass'
 gem 'coffee-script'
 gem 'nokogiri'
 
+gem 'data_mapper'
+gem 'dm-mongo-adapter'
+
 group :development do
   gem 'sinatra-reloader'
   gem 'rspec'

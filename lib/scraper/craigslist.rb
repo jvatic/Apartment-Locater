@@ -16,6 +16,8 @@ module Scraper
     end
 
     def parse!
+      @attributes[:url] = @listing_url
+
       email = @doc.xpath("//a[starts-with(@href, 'mailto')]").first
       @attributes[:email] = email.text if email
 
@@ -58,6 +60,11 @@ module Scraper
       }
 
       @attributes[:image_urls] = @doc.xpath("//td/img").map { |img| img['src'] }
+    end
+
+    def save
+      return false unless Listing.all(:url => @listing_url).empty?
+      @listing = Listing.create!(@attributes)
     end
 
     private
