@@ -93,6 +93,8 @@ module Scraper
     def save
       return false unless Listing.all(:url => @listing_url).empty?
       @listing = Listing.create!(@attributes)
+      @listing.geocode
+      @listing.save
     end
 
     private
