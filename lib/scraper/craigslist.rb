@@ -60,7 +60,7 @@ module Scraper
         @attributes[:available_date] = parse_date(available)
 
         @attributes[:available] = nil unless @attributes[:available_date]
-        @attributes[:available] = "immediately" if available =~ /immediately/i
+        @attributes[:available] = "immediately" if available =~ /immediate/i
       end
 
       @attributes[:ensuite_landry] = !full_text.scan(/washer\s*(?:and|\/|&|,)\s*dr[yi]er/i).empty?
