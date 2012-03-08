@@ -14,6 +14,7 @@ class Listing
   property :url            , String
   property :title          , String
   property :posted_at      , Time
+  property :updated_at     , Time
   property :email          , String
   property :phone          , String
   property :available      , String

@@ -10,6 +10,13 @@ namespace :craigslist do
   end
 end
 
+namespace :kijiji do
+  task :import_toronto do
+    require './lib/scraper/kijiji'
+    Scraper::Kijiji.parse_pages("http://toronto.kijiji.ca/f-real-estate-apartments-condos-bachelor-studio-City-of-Toronto-W0QQAdTypeZ2QQCatIdZ211QQLocationZ1700273QQisSearchFormZtrue")
+  end
+end
+
 namespace :listings do
   task :mark_duplicates do
     Listing.all.each do |listing|
