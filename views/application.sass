@@ -1,2 +1,21 @@
 @import 'mixins.sass'
 @import 'bootstrap.css'
+
+.show-map
+  :cursor pointer
+
+#map-container
+  :display block
+  :visibility hidden
+
+  &.in
+    :visibility visible
+
+#mapCanvas
+  :height 350px
+
+  img
+    :max-width none
+
+tr.duplicate
+  @include transparent(40)

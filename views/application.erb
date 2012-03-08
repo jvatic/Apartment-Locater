@@ -12,6 +12,50 @@
         <h1>Apartment Find <small>Digging through Craigslist made easy!</small></h1>
       </div>
 
+      <table class='table-striped table'>
+        <thead>
+          <tr>
+            <th>Price</th>
+            <th># br</th>
+            <th>Ensuite Laundry?</th>
+            <th>Posted At</th>
+            <th>Available</th>
+            <th>Address</th>
+            <th></th>
+            <th>Url</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @listings.each do |listing| %>
+            <tr data-tooltip title="<%= listing.title %>" class='<%= listing.duplicate? ? "duplicate" : "" %>'>
+              <td><%= money_string listing.price %></td>
+              <td><%= listing.bedrooms %></td>
+              <td><%= yes_or_no listing.ensuite_landry %></td>
+              <td><%= format_datetime listing.posted_at %></td>
+              <td><%= listing.available %></td>
+              <td><%= listing.formatted_address || listing.full_address_with_region %></td>
+              <td><i class='icon-map-marker show-map' data-address="<%= listing.formatted_address || listing.full_address_with_region %>"></i></td>
+              <td><%= listing.url %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
     </div>
+
+    <div class="modal" id="map-container">
+      <div class="modal-header">
+        <a href="#" class="close" data-dismiss="modal">×</a>
+        <h3 id='mapTitle'></h3>
+      </div>
+      <div class="modal-body">
+        <div id='mapCanvas'></div>
+      </div>
+    </div>
+
+    <% javascript "http://maps.googleapis.com/maps/api/js?key=#{google_maps_api_key}&sensor=false" %>
+    <% javascript 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js', :underscore %>
+    <% javascript :application, 'bootstrap-tooltip', 'bootstrap-modal' %>
+    <%= javascript %>
   </body>
 </html>

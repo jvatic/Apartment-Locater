@@ -9,6 +9,15 @@ configure :development do |config|
 end
 
 get '/' do
+  query = {
+    :duplicate => false,
+    :ensuite_landry => true,
+    :price.lte => 1400
+  }
+  @listings = Listing.all(query.merge({ :available => "immediately" }))
+  @listings.concat Listing.all(query.merge({ :available.lt => Date.strptime("01/04/2012", "%d/%m/%Y") }))
+  @listings.sort!
+
   erb :application
 end
 

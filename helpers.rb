@@ -1,5 +1,4 @@
 module Sinatra::Helpers
-
   class JavaScriptRequire
     attr_accessor :orig_path
     def initialize(path)
@@ -90,6 +89,27 @@ module Sinatra::Helpers
         "<link rel='stylesheet' type='text/css' href='#{path}' />"
       end.join("\n")
     end
+  end
+
+  def money_string(text)
+    return text unless text
+    "$%d" % text
+  end
+
+  def format_date(date)
+    date.strftime("%d-%B")
+  end
+
+  def format_datetime(time)
+    time.strftime("%d-%B %I:%M%p")
+  end
+
+  def yes_or_no(boolean)
+    boolean ? "Yes" : "No"
+  end
+
+  def google_maps_api_key
+    Settings.google_maps_api_key
   end
 
 end
