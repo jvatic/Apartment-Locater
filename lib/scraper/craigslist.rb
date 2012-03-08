@@ -3,6 +3,30 @@ require 'open-uri'
 
 module Scraper
   class Craigslist
+    class << self
+      def parse_all_pages(index_page)
+        pages = [index_page].concat(10.times.map { |i| "#{index_page}index#{(i+1)*100}.html" })
+        pages.each do |url|
+          begin
+            self.parse_listings(url)
+            puts "Imported [#{url}]"
+          rescue => e
+            puts "Failed to import [#{url}]: #{e.to_s}\n\t#{e.backtrace.join("\n\t")}\n"
+          end
+        end
+      end
+
+      def parse_listings(index_page)
+        doc = Nokogiri::HTML( open(index_page) )
+        doc.xpath("//p/a").map { |a| a['href'] }.each do |listing_url|
+          scrape = self.new(listing_url)
+          scrape.fetch!
+          scrape.parse!
+          scrape.save
+        end
+      end
+    end
+
     def initialize(listing_url=nil)
       @listing_url = listing_url
       @attributes = {}
@@ -84,9 +108,8 @@ module Scraper
 
       year = Time.now.year
 
-      return nil unless month && day
-
       Date.strptime("#{day}/#{month}/#{year}", "%d/%B/%Y")
+    rescue
     end
   end
 end
