@@ -98,6 +98,10 @@ describe Scraper::Craigslist do
     sample(2).attributes[:address][:GeographicArea].should == "1 King St. W."
   end
 
+  it "should parse linked viewit id" do
+    sample(1).attributes[:linked_viewit_id].should == "121738"
+  end
+
   it "should parse image urls" do
     sample(1).attributes[:image_urls].should == [
       "http://images.craigslist.org/5L35G35Mc3F43Lb3Ncc3564e9bc620dcf1c9e.jpg",

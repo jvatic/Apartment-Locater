@@ -80,6 +80,9 @@ module Scraper
         @attributes[:bedrooms] = 0
       end
 
+      viewit_id = full_text.scan(/vit[#=\s]+(\d+)/i).flatten.first
+      @attributes[:linked_viewit_id] = viewit_id if viewit_id
+
       @attributes[:body_html] = @doc.css("#userbody").to_html
 
       @attributes[:address] = @doc.xpath("//comment()").select { |n| n.text =~ /^\s*CLTAG/ }.inject({}) { |memo, data|
