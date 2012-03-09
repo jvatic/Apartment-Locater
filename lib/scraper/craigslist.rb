@@ -22,6 +22,7 @@ module Scraper
           scrape = self.new(listing_url)
           scrape.fetch!
           scrape.parse!
+          next unless scrape.attributes[:posted_at] >= Date.today.prev_month.to_time
           scrape.save
         end
       end

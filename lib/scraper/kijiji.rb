@@ -25,6 +25,7 @@ module Scraper
         scraper = self.new(listing_url)
         scraper.fetch!
         scraper.parse!
+        return unless scraper.attributes[:posted_at] >= Date.today.prev_month.to_time
         scraper.save
         puts "Imported [#{listing_url}]"
       rescue => e
