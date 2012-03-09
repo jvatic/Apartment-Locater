@@ -27,6 +27,7 @@ class Listing
   property :address        , Hash
   property :body_html      , String
   property :duplicate      , Boolean
+  property :infested       , Boolean
 
   property :formatted_address , String
   property :lat               , Float
@@ -37,6 +38,17 @@ class Listing
   property :region            , String
   property :country           , String
 
+  def check_infestation
+    require './lib/scraper/bedbug_registry'
+    url = Scraper::BedbugRegistry.address_url(formatted_address)
+    url ||= Scraper::BedbugRegistry.address_url(full_address_with_region)
+    return nil unless url
+
+    scraper = Scraper::BedbugRegistry.new(url)
+    scraper.fetch!
+    scraper.parse!
+    self.infested = scraper.infested?
+  end
   def <=>(other)
     return 0 unless lat && lng && other.lat && other.lng
     latlng = [43.649201, -79.377839]

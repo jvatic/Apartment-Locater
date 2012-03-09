@@ -89,6 +89,7 @@ module Scraper
       return false unless Listing.all(:url => @listing_url).empty?
       @listing = Listing.create!(@attributes)
       @listing.geocode
+      @listing.check_infestation
       @listing.save
     end
 
