@@ -30,4 +30,18 @@ namespace :listings do
       listing.save
     end
   end
+
+  task :import_linked_viewit do
+    require './lib/scraper/viewit'
+    Listing.all(:linked_viewit_id.not => nil).each do |listing|
+      url = Scraper::Viewit.vit_url(listing.linked_viewit_id)
+      begin
+        scrape = Scraper::Viewit.new(url)
+        scrape.fetch!
+        scrape.parse!
+        scrape.save
+      rescue
+      end
+    end
+  end
 end

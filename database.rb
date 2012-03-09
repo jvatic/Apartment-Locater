@@ -38,6 +38,9 @@ class Listing
   property :region            , String
   property :country           , String
 
+  property :viewit_id, String
+  property :linked_viewit_id, String
+
   def check_infestation
     require './lib/scraper/bedbug_registry'
     url = Scraper::BedbugRegistry.address_url(formatted_address)
