@@ -17,25 +17,34 @@
           <tr>
             <th>Price</th>
             <th># br</th>
+            <th>Distance</th>
             <th>Ensuite Laundry?</th>
             <th>Posted At</th>
             <th>Available</th>
             <th>Address</th>
+            <th>Pictures</th>
             <th></th>
-            <th>Url</th>
           </tr>
         </thead>
         <tbody>
           <% @listings.each do |listing| %>
-            <tr data-tooltip title="<%= listing.title %>" class='<%= listing.duplicate? ? "duplicate" : "" %>'>
+            <tr data-tooltip title="<%= listing.title %>" class="<%= listing.infested ? 'infested' : '' %>">
               <td><%= money_string listing.price %></td>
               <td><%= listing.bedrooms %></td>
+              <td><%= "%.02fm" % listing.distance_from %></td>
               <td><%= yes_or_no listing.ensuite_landry %></td>
               <td><%= format_datetime listing.posted_at %></td>
               <td><%= listing.available %></td>
               <td><%= listing.formatted_address || listing.full_address_with_region %></td>
-              <td><i class='icon-map-marker show-map' data-address="<%= listing.formatted_address || listing.full_address_with_region %>"></i></td>
-              <td><%= listing.url %></td>
+              <td>
+                <% unless listing.infested %>
+                  <%= listing.image_urls.inject("") { |html, url| html << "<img src='#{url}' class='thumb' />" } %>
+                <% end %>
+              </td>
+              <td>
+                 <i class='icon-map-marker show-map' data-address="<%= listing.formatted_address || listing.full_address_with_region %>"></i>
+                 <a rel='external' href='<%= listing.url %>'><i class='icon-eye-open'></i></a>
+               </td>
             </tr>
           <% end %>
         </tbody>
@@ -55,7 +64,7 @@
 
     <% javascript "http://maps.googleapis.com/maps/api/js?key=#{google_maps_api_key}&sensor=false" %>
     <% javascript 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js', :underscore %>
-    <% javascript :application, 'bootstrap-tooltip', 'bootstrap-modal' %>
+    <% javascript :application, 'bootstrap-tooltip', 'bootstrap-popover', 'bootstrap-modal' %>
     <%= javascript %>
   </body>
 </html>

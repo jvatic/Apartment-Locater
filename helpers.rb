@@ -97,11 +97,13 @@ module Sinatra::Helpers
   end
 
   def format_date(date)
+    return unless date
     date.strftime("%d-%B")
   end
 
   def format_datetime(time)
-    time.strftime("%d-%B %I:%M%p")
+    return unless time
+    time.strftime("%d-%B %I:%M%p %Z")
   end
 
   def yes_or_no(boolean)

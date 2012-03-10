@@ -1,5 +1,31 @@
 jQuery ->
-  ($ "tr[data-tooltip]").tooltip()
+  ($ "tr[data-tooltip]").tooltip({ placement: 'left' })
+
+  ($ "a[rel=external]").click (e)->
+    url = ($ this).attr 'href'
+    e.preventDefault()
+    window.open(url)
+
+  ($ "img.thumb").each ->
+    $self = ($ this)
+    url = $self.attr('src')
+    $content = ($ "<img src='#{url}' />")
+    setupPopup = =>
+      [width, height] = [$content.width(), $content.height()]
+      clearTimeout $content.data 'loadTimeout'
+      unless width > 0 && height > 0
+        return $content.data 'loadTimeout', setTimeout(setupPopup, 200)
+
+      $content.hide()
+      $self.popover {
+        placement: 'left'
+        content: "<img src='#{url}' style='width#{width}px;height:#{height}px' />"
+      }
+
+    $content.load =>
+      setupPopup()
+
+    $content.appendTo ($ 'body')
 
   mapOptions = {
     zoom: 8

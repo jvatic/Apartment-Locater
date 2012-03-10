@@ -10,13 +10,12 @@ end
 
 get '/' do
   query = {
-    :duplicate => false,
-    :ensuite_landry => true,
-    :price.lte => 1400
+    :price.lte => 1100,
+    :posted_at.gte => Date.today.to_time,
+    :infested => false
   }
-  @listings = Listing.all(query.merge({ :available => "immediately" }))
-  @listings.concat Listing.all(query.merge({ :available.lt => Date.strptime("01/04/2012", "%d/%m/%Y") }))
-  @listings.sort!
+  @listings = Listing.all(query)
+  @listings = @listings.sort!
 
   erb :application
 end

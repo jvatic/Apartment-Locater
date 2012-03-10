@@ -52,24 +52,32 @@ class Listing
     scraper.parse!
     self.infested = scraper.infested?
   end
+
+  def distance_from(latlng=[43.649201, -79.377839])
+    return nil unless lat && lng
+    (Geocoder::Calculations.distance_between(latlng, [lat, lng]) * 1.609344) * 1000 # miles to meters
+  end
+
   def <=>(other)
-    return 0 unless lat && lng && other.lat && other.lng
-    latlng = [43.649201, -79.377839]
-    a = Geocoder::Calculations.distance_between(latlng, [lat, lng])
-    b = Geocoder::Calculations.distance_between(latlng, [other.lat, other.lng])
-    a <=> b
+    return 0  unless (lat && lng) || (other.lat && other.lng)
+    return -1 unless lat && lng
+    return 1  unless other.lat && other.lng
+
+    distance_from <=> other.distance_from
   end
 
   def full_address
     if address[:xstreet0] && address[:xstreet1]
       "#{address[:xstreet0]} at #{address[:xstreet1]}"
+    elsif address[:xstreet0] || address[:xstreet1]
+      address[:xstreet0] || address[:xstreet1]
     else
       [address[:GeographicArea], (address[:city] || "Toronto"), (address[:region] || "ON")].compact.join(", ")
     end
   end
 
   def full_address_with_region
-    if address[:xstreet0] && address[:xstreet1]
+    if address[:xstreet0] || address[:xstreet1]
       [full_address, (address[:city] || "Toronto"), (address[:region] || "ON")].compact.join(", ")
     else
       full_address
