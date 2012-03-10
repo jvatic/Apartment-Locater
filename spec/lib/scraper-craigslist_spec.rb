@@ -7,6 +7,7 @@ describe Scraper::Craigslist do
     unless @samples[num]
       @samples[num] = Scraper::Craigslist.new
       @samples[num].doc = Nokogiri::HTML( html_fixture("craigslist#{num}") )
+      @samples[num].instance_variable_set("@listing_url", "#{num}")
       @samples[num].parse!
     end
     @samples[num]
@@ -32,6 +33,7 @@ describe Scraper::Craigslist do
 
     sample(6).attributes[:phone].should == '416 531 7299'
     sample(7).attributes[:phone].should == '416 -- 618 4214'
+    sample(8).attributes[:phone].should == '6472971872'
   end
 
   it "should parse avilability" do
@@ -49,6 +51,12 @@ describe Scraper::Craigslist do
 
     sample(5).attributes[:available].should == "February 19th"
     sample(5).attributes[:available_date].should == Date.strptime("19/02/2012", "%d/%m/%Y")
+
+    sample(8).attributes[:available].should == "01 April 2012"
+    sample(8).attributes[:available_date].should == Date.strptime("01/04/2012", "%d/%m/%Y")
+
+    sample(9).attributes[:available].should == "for April"
+    sample(9).attributes[:available_date].should == Date.strptime("01/04/2012", "%d/%m/%Y")
   end
 
   it "should parse price" do

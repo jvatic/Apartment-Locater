@@ -52,16 +52,17 @@ module Scraper
       posted_at = full_text.scan(/Date:\s*([^\n]+)/).flatten.first
       @attributes[:posted_at] = Time.parse(posted_at) if posted_at
 
-      if phone = full_text.scan(/\(?\d{3}\)?[\s.-]+\d{3}[\s.-]+\d{4}/)
+      if phone = full_text.scan(/(?<=\s)\(?\d{3}\)?[\s.-]*\d{3}[\s.-]*\d{4}(?=[\s.])/)
         @attributes[:phone] = phone.first
       end
 
-      if available = full_text.scan(/available ([^-~.$!,\n]+)/i).flatten.first
-        @attributes[:available] = available
+      if available = (full_text.scan(/available ([^-~.$!,;\n]+)/i).flatten.first || full_text.scan(/\bon\b([^-~,$\n]+)/i).flatten.sort_by { |m| m =~ /\d/ ? -1 : 1 }.first)
+        @attributes[:available] = available.sub(/^\s*/, '').sub(/\s*$/, '')
         @attributes[:available_date] = parse_date(available)
 
         @attributes[:available] = nil unless @attributes[:available_date]
         @attributes[:available] = "immediately" if available =~ /immediate/i
+      else
       end
 
       @attributes[:ensuite_landry] = !full_text.scan(/washer\s*(?:and|\/|&|,)\s*dr[yi]er/i).empty?
@@ -105,12 +106,18 @@ module Scraper
     private
 
     def parse_date(string)
+      date = begin
+               Date.parse(string)
+             rescue
+             end
+      return date if date
+
       month = Date::MONTHNAMES.compact.select { |m|
         string.scan(m).first
       }.first
 
       day = (1..31).select { |i|
-        string.scan(i.to_s).first
+        string.scan(/\b#{i.to_s}\b/).first
       }.last
 
       year = Time.now.year
