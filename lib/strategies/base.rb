@@ -18,8 +18,8 @@ module Strategies
     end
 
     def parse
-      @doc.css(".adcontent div, p, br, li").each { |el| el.after("\n") }
-      @full_text = @doc.text
+      prepare_doc
+
       parse_title
       parse_phone
       parse_bedrooms
@@ -37,6 +37,11 @@ module Strategies
     end
 
     private
+
+    def prepare_doc
+      @doc.css(".adcontent div, p, br, li").each { |el| el.after("\n") }
+      @full_text = @doc.text
+    end
 
     def parse_title
       @attributes[:title] = @doc.title
