@@ -5,13 +5,9 @@ module Strategies
       super
       parse_date_posted
       parse_email_address
-      parse_phone_number
-      parse_availability
       parse_price
       parse_bedrooms
       parse_square_footage
-      parse_laundry
-      parse_utilities
       parse_address
       parse_image_urls
     end
@@ -32,33 +28,12 @@ module Strategies
       @attributes[:email] = email.text if email
     end
 
-    def parse_phone_number
-      @attributes[:phone] = Normalize.phone( Matchers.phone(@full_text) )
-    end
-
-    def parse_availability
-      @attributes[:available] = Matchers.available(@full_text)
-      @attributes[:available_date] = Matchers.date(@attributes[:available])
-    end
-
     def parse_price
       @attributes[:price] = Matchers.price(@full_text)
     end
 
-    def parse_bedrooms
-      @attributes[:bedrooms] = Matchers.num_bedrooms(@full_text)
-    end
-
     def parse_square_footage
       @attributes[:square_footage] = Matchers.square_footage(@full_text)
-    end
-
-    def parse_laundry
-      @attributes[:laundry] = Matchers.available_laundry(@full_text)
-    end
-
-    def parse_utilities
-      @attributes[:utilities] = Matchers.utilities(@full_text)
     end
 
     def parse_address
