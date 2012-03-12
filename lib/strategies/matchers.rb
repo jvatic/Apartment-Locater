@@ -10,14 +10,16 @@ module Strategies::Matchers
       m = string.scan(/available\s+([^~.$!,\n]+)/i).flatten
       a = m.select { |m| m =~ /\d/ }.first
       b = m.first
-      m = if b.to_s =~ /immediate|available now/i || string.scan(/(?:immediate)|(?:available now)/i).first
+      m = if a
+            a
+      elsif b.to_s =~ /immediate|available now/i || string.scan(/(?:immediate)|(?:available now)/i).first
         'immediately'
-      elsif b.to_s =~ /for \w+/
+      elsif b.to_s.scan(/for \w+/).flatten.select { |i| !Date::MONTHNAMES.compact.select { |n| i =~ /#{n}/i }.empty? }.first
         b.sub(/\W+$/, '')
-      elsif c = string.scan(/\bon\b([^-~,$\n]+)/i).flatten.sort_by { |i| i =~ /\d/ ? -1 : 1 }.first
+      elsif c = string.scan(/\b[Oo]n\b([^-~,$\n]+)/).flatten.sort_by { |i| i =~ /\d/ ? -1 : 1 }.select { |i|
+          !Date::MONTHNAMES.compact.select { |n| i =~ /#{n}/i }.empty?
+        }.first
         c
-      else
-        a
       end
       m.sub(/^\s+/, '').sub(/\s+$/, '') if m
     end
@@ -29,7 +31,11 @@ module Strategies::Matchers
 
     def utilities(string)
       # returns included | extra | nil
-      string.scan(/all inclusive/i).empty? ? nil : 'included'
+      if !string.scan(/(?:all inclusive)|(?:including\s+utilities)/i).empty?
+        'included'
+      elsif !string.scan(/hydro\s*(?:is\s*)?extra/i).empty?
+        'extra'
+      end
     end
 
     def parking(string)
@@ -80,8 +86,12 @@ module Strategies::Matchers
     end
 
     def num_bedrooms(string)
-      n = string.scan(/\d+(?=\s*br)/).first
-      n.to_f || (string.scan(/bachelor/).first ? 0 : nil)
+      n = string.scan(/\b\d+(?=\s*b(?:ed)?r(?:oom)?)/).first
+      if n
+        n.to_i
+      else
+        string.scan(/bachelor/).first ? 0 : nil
+      end
     end
 
     def square_footage(string)
@@ -91,7 +101,7 @@ module Strategies::Matchers
 
     def available_laundry(string)
       # returns <laundry string> | nil, e.g. 'ensuite', 'on site', nil, ...
-      ensuite = !string.scan(/washer\s*(?:and|\/|&|,)\s*dr[yi]er/i).empty?
+      ensuite = !string.scan(/washer\s*(?:and|\/|&|,)\s*dr[yi]er/i).empty? || !string.scan(/ensuite\s+laundry/i).empty?
       on_site = !string.scan(/laundry/).empty?
       return 'ensuite' if ensuite
       return 'on site' if on_site
