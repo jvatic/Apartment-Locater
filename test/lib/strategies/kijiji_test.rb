@@ -27,12 +27,12 @@ class Strategies::KijijiTest < ActiveSupport::TestCase
   end
 
   test "parses price" do
-    assert_equal 625, sample(1).attributes[:price]
+    assert_equal 625..625, sample(1).attributes[:price]
   end
 
   test "parses # bedrooms" do
-    assert_equal 0, sample(3).attributes[:bedrooms]
-    assert_equal 1, sample(2).attributes[:bedrooms]
+    assert_equal 0..0, sample(3).attributes[:bedrooms]
+    assert_equal 1..1, sample(2).attributes[:bedrooms]
   end
 
   test "parses phone number" do

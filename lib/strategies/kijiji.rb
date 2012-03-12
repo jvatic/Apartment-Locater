@@ -4,7 +4,6 @@ module Strategies
       super
       parse_date_posted
       parse_address
-      parse_price
       parse_image_urls
     end
 
@@ -23,11 +22,6 @@ module Strategies
     def parse_address
       address = @full_text.scan(/Address(?!\!):?\s*([^\n]+)/i).flatten.first
       @attributes[:address] = address.gsub(/[^-\w\d\s,\/&]/, '').sub(/^\s+/, '').sub(/\s+$/, '') if address
-    end
-
-    def parse_price
-      price = @full_text.scan(/Price\s*\$([\d.,]+)/i).flatten.first
-      @attributes[:price] = price.gsub(/[^\d.]/, '').to_f if price
     end
 
     def parse_image_urls

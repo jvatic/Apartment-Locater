@@ -31,6 +31,7 @@ class Strategies::CraigslistTest < ActiveSupport::TestCase
     assert_equal "immediately"         , sample(3).attributes[:available]
     assert_equal "01 April 2012"       , sample(6).attributes[:available]
     assert_equal "for April"           , sample(7).attributes[:available]
+    assert_nil sample(10).attributes[:available]
   end
 
   test "parses availability date" do
@@ -40,13 +41,15 @@ class Strategies::CraigslistTest < ActiveSupport::TestCase
   end
 
   test "parses price" do
-    assert_equal 1200, sample(1).attributes[:price]
+    assert_equal 1200..1200, sample(1).attributes[:price]
     assert_nil sample(2).attributes[:price]
+    assert_equal 875..1355, sample(10).attributes[:price]
   end
 
   test "parses # of bedrooms" do
-    assert_equal 1, sample(1).attributes[:bedrooms]
-    assert_equal 0, sample(3).attributes[:bedrooms]
+    assert_equal 1..1, sample(1).attributes[:bedrooms]
+    assert_equal 0..0, sample(3).attributes[:bedrooms]
+    assert_equal 0..2, sample(10).attributes[:bedrooms]
   end
 
   test "parses square footage" do
@@ -67,8 +70,13 @@ class Strategies::CraigslistTest < ActiveSupport::TestCase
     assert_equal 'included', sample(3).attributes[:utilities]
   end
 
+  test "parse utilities extra" do
+    assert_equal 'extra', sample(10).attributes[:utilities]
+  end
+
   test "parses address" do
     assert_equal 'Logan Avenue, Toronto, ONT', sample(1).attributes[:address]
+    assert_equal '17-25 Lascelles Blvd, Toronto, ON', sample(10).attributes[:address]
   end
 
   test "parses image urls" do

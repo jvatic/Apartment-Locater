@@ -25,16 +25,20 @@ module Strategies::Matchers
     end
 
     def price(string)
-      p = string.scan(/\$[.,\d]+/).first
-      p.gsub(/[^.\d]/, '').to_f if p
+      p = string.scan(/\$[.,\d]+/).map { |i| i.gsub(/[^.\d]/, '').to_f }.select { |i| i > 0 }.sort
+      return if p.empty?
+      (p.first..p.last)
     end
 
     def utilities(string)
       # returns included | extra | nil
       if !string.scan(/(?:all inclusive)|(?:including\s+utilities)/i).empty?
         'included'
-      elsif !string.scan(/hydro\s*(?:is\s*)?extra/i).empty?
-        'extra'
+      elsif (hydro_index = (string =~ /hydro/i)) && (extra_index = (string =~ /extra/i))
+        difference = extra_index - hydro_index
+        if difference > 1 && difference < 40
+          'extra'
+        end
       end
     end
 
@@ -86,12 +90,11 @@ module Strategies::Matchers
     end
 
     def num_bedrooms(string)
-      n = string.scan(/\b\d+(?=\s*b(?:ed)?r(?:oom)?)/).first
-      if n
-        n.to_i
-      else
-        string.scan(/bachelor/).first ? 0 : nil
-      end
+      n = string.scan(/\b\d+(?=\s*b(?:ed)?r(?:oom)?)/i)
+      n ||= []
+      n << (string.scan(/bachelor/).first && !string.scan(/bedrooms?\s*bachelor/).first ? 0 : nil)
+      n = n.compact.map { |i| i.to_i }.sort
+      (n.first..n.last) unless n.empty?
     end
 
     def square_footage(string)

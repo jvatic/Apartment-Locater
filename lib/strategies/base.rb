@@ -22,6 +22,7 @@ module Strategies
 
       parse_title
       parse_phone
+      parse_price
       parse_bedrooms
       parse_availability
       parse_laundry
@@ -49,6 +50,10 @@ module Strategies
 
     def parse_phone
       @attributes[:phone] = Normalize.phone( Matchers.phone(@full_text) )
+    end
+
+    def parse_price
+      @attributes[:price] = Matchers.price(@full_text)
     end
 
     def parse_bedrooms
