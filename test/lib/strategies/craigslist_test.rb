@@ -79,6 +79,10 @@ class Strategies::CraigslistTest < ActiveSupport::TestCase
     assert_equal '17-25 Lascelles Blvd, Toronto, ON', sample(10).attributes[:address]
   end
 
+  test "parses youtube urls" do
+    assert_equal ["http://www.youtube.com/watch?v=PW5o_q6HP8s"], sample(10).attributes[:youtube_urls]
+  end
+
   test "parses image urls" do
     assert_equal [
       "http://images.craigslist.org/5L35G35Mc3F43Lb3Ncc3564e9bc620dcf1c9e.jpg",

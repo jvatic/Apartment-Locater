@@ -27,6 +27,7 @@ module Strategies
       parse_availability
       parse_laundry
       parse_utilities
+      parse_youtube_urls
     end
 
     def save
@@ -71,6 +72,10 @@ module Strategies
 
     def parse_utilities
       @attributes[:utilities] = Matchers.utilities(@full_text)
+    end
+
+    def parse_youtube_urls
+      @attributes[:youtube_urls] = Matchers.youtube_urls(@full_text)
     end
 
   end

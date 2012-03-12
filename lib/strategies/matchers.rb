@@ -109,5 +109,10 @@ module Strategies::Matchers
       return 'ensuite' if ensuite
       return 'on site' if on_site
     end
+
+    def youtube_urls(string)
+      urls = string.scan(/(?:http:\/\/)?(?:www.)?youtube.com\/watch\?v=[^\s]+/i)
+      urls.empty? ? nil : urls
+    end
   end
 end
