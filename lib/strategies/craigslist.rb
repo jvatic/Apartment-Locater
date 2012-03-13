@@ -1,5 +1,33 @@
 module Strategies
   class Craigslist < Base
+    class << self
+      def parse_all_pages(index_page)
+        pages = [index_page] #.concat(10.times.map { |i| "#{index_page}index#{(i+1)*100}.html" })
+        pages.each do |url|
+          begin
+            self.parse_listings(url)
+            log "Imported [#{url}]"
+          rescue => e
+            log "Failed to import [#{url}]: #{e.to_s}\n\t#{e.backtrace.join("\n\t")}\n"
+          end
+        end
+      end
+
+      def parse_listings(index_page)
+        doc = Nokogiri::HTML( open(index_page) )
+        doc.xpath("//p/a").map { |a| a['href'] }.each do |listing_url|
+          next if Listing.all_of(:url => listing_url).count > 0
+          scrape = self.new(listing_url)
+          scrape.fetch
+          scrape.parse
+          next unless scrape.attributes[:posted_at] >= Date.today.prev_month.to_time
+          if scrape.save
+            log "Imported [#{listing_url}]"
+          end
+        end
+      end
+    end
+
     def parse
       return if removed?
       super

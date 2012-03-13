@@ -3,6 +3,12 @@ require 'open-uri'
 
 module Strategies
   class Base
+    class << self
+      def log(msg)
+        puts "[#{self.name}] [#{Time.now}]: #{msg}"
+      end
+    end
+
     def initialize(url)
       @url = url
       @attributes = { :url => @url }
@@ -31,11 +37,8 @@ module Strategies
     end
 
     def save
-      # init Listing with @attributes
-      # find duplicates, cross reference
-      # geocode
-      # check infested
-      # save
+      @listing = Listing.new(@attributes)
+      @listing.save
     end
 
     private
