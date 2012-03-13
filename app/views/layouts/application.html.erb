@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Search Apartments</title>
+  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+
+  <div class='container'>
+    <div class='hero-unit'>
+      <%= yield(:header) %>
+    </div>
+
+    <% if flash[:notice] %>
+      <div class='alert block-alert alert-info'>
+        <%= flash[:notice] %>
+      </div>
+    <% end %>
+
+    <%= yield %>
+  </div>
+
+</body>
+</html>

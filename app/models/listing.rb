@@ -24,6 +24,8 @@ class Listing
   field :region         , type: String
   field :country        , type: String
 
+  scope :clean, lambda { any_of({:infested => nil}, {:infested => false}) }
+
   geocoded_by :address, :coordinates => :latlng do |listing, results|
     if geo = results.first
       listing.address     = geo.address
