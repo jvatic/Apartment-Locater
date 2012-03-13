@@ -19,12 +19,6 @@ class ListingTest < ActiveSupport::TestCase
     assert_equal "New York"                             , @listing.region
     assert_equal "United States"                        , @listing.country
     assert_equal "4 Penn Plaza, New York, NY 10001, USA", @listing.address
-    assert !@listing.changed?, 'listing changes are not saved'
-
-    assert_equal ["city"], @listing.changed
-    @listing.city = "Bacon"
-    @listing.save
-    assert_equal "Bacon", @listing.city
   end
 
   test "Listing checks for bedbugs when address changed" do
