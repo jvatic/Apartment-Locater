@@ -5,6 +5,13 @@ class Strategies::BedbugRegistry
   class << self
     def address_infested?(address)
       # returns true | false | nil
+      url = url_from_address(address)
+      return unless url
+
+      parser = new(url)
+      parser.fetch
+      parser.parse
+      parser.infested?
     end
 
     def url_from_address(address)
