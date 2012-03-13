@@ -40,10 +40,17 @@ class Strategies::CraigslistTest < ActiveSupport::TestCase
     assert_equal Date.parse("01-April-#{Date.today.year}"), sample(7).attributes[:available_date]
   end
 
+  test "parses parking price" do
+    assert_equal 125, sample(11).attributes[:parking]
+    assert_nil sample(12).attributes[:parking]
+    assert_equal 0, sample(13).attributes[:parking]
+  end
+
   test "parses price" do
     assert_equal 1200..1200, sample(1).attributes[:price]
     assert_nil sample(2).attributes[:price]
     assert_equal 875..1355, sample(10).attributes[:price]
+    assert_equal 805..805, sample(11).attributes[:price]
   end
 
   test "parses # of bedrooms" do

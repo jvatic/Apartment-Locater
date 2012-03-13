@@ -10,6 +10,7 @@ class Listing
   field :available      , type: String
   field :available_date , type: Date
   field :price          , type: Range
+  field :parking        , tupe: Float
   field :bedrooms       , type: Range
   field :square_footage , type: Integer
   field :laundry        , type: String
