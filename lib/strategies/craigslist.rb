@@ -2,7 +2,7 @@ module Strategies
   class Craigslist < Base
     class << self
       def parse_all_pages(index_page)
-        pages = [index_page] #.concat(10.times.map { |i| "#{index_page}index#{(i+1)*100}.html" })
+        pages = [index_page].concat(10.times.map { |i| "#{index_page}index#{(i+1)*100}.html" })
         pages.each do |url|
           begin
             self.parse_listings(url)
