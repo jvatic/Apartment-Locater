@@ -9,11 +9,9 @@ module Strategies
       def available(string)
         # returns immediately | <availability string> (e.g. 'for April', 'Please call', ...)
         m = string.scan(/available\s+([^~.$!,\n]+)/i).flatten
-        a = m.select { |m| m =~ /\d/ }.first
+        a = m.select { |m| !Date::MONTHNAMES.compact.select { |n| m =~ /#{n}/i }.empty? }.first || m.select { |m| m =~ /\d/ }.first
         b = m.first
-        m = if a
-              a
-        elsif b.to_s =~ /immediate|available now/i || string.scan(/(?:immediate)|(?:available now)/i).first
+        m = if b.to_s =~ /immediate|available now/i || string.scan(/(?:immediate)|(?:available now)/i).first
           'immediately'
         elsif b.to_s.scan(/for \w+/).flatten.select { |i| !Date::MONTHNAMES.compact.select { |n| i =~ /#{n}/i }.empty? }.first
           b.sub(/\W+$/, '')
@@ -21,6 +19,8 @@ module Strategies
             !Date::MONTHNAMES.compact.select { |n| i =~ /#{n}/i }.empty?
           }.first
           c
+        elsif a
+          a
         end
         m.sub(/^\s+/, '').sub(/\s+$/, '') if m
       end
@@ -56,6 +56,13 @@ module Strategies
           if difference > 1 && difference < 40
             'extra'
           end
+        else
+          not_included_index = string =~ /not included/i
+          hydro_index = string =~ /hydro/i
+          return unless not_included_index && hydro_index
+          d1 = hydro_index - not_included_index
+          d2 = not_included_index - hydro_index
+          ((d1 > 0 && d1 < 35) || (d2 > 0 && d2 < 35)) ? 'extra' : nil
         end
       end
 
