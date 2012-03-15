@@ -5,8 +5,11 @@
 <table id='listings' class='table table-striped'>
   <thead>
     <tr>
-      <th>Distance (meters)</th>
+      <% if @location %>
+        <th>Distance (meters)</th>
+      <% end %>
       <th>Price</th>
+      <th>Utilities</th>
       <th>Address</th>
       <th>Availability</th>
       <th></th>
@@ -15,8 +18,11 @@
   <tbody>
     <% @listings.each do |listing| %>
       <tr>
-        <td><%= ("%.02f" % (listing.distance_from(@location, :km) * 1000)) if listing.latlng %></td>
+        <% if @location %>
+          <td><%= ("%.02f" % (listing.distance_from(@location, :km) * 1000)) if listing.latlng %></td>
+        <% end %>
         <td><%= number_to_currency listing.price.first if listing.price %></td>
+        <td><%= listing.utilities %></td>
         <td><%= listing.address %></td>
         <td><%= listing.available %></td>
         <td><%= link_to content_tag("i", "&nbsp;".html_safe, :class => 'icon-eye-open'), listing.url %></td>

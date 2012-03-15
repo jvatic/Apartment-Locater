@@ -13,9 +13,24 @@
       <%= yield(:header) %>
     </div>
 
+    <form class='well inline-form'>
+      <input type='text' value='<%= @longitude %>' name='filter[longitude]' placeholder='longitude' class='input-small' />
+      <input type='text' value='<%= @latitude %>' name='filter[latitude]' placeholder='latitude' class='input-small' />
+      <input type='text' value='<%= @radius unless @radius == 10 %>' name='filter[radius]' placeholder='radius (km)' class='input-small' />
+      <input type='text' value='<%= @min_price if @min_price > 0 %>' name='filter[min_price]' placeholder='min $' class='input-small' />
+      <input type='text' value='<%= @max_price if @max_price > 0 %>' name='filter[max_price]' placeholder='max $' class='input-small' />
+      <input type='submit' class='btn' value='Filter' />
+    </form>
+
     <% if flash[:notice] %>
       <div class='alert block-alert alert-info'>
         <%= flash[:notice] %>
+      </div>
+    <% end %>
+
+    <% if flash[:error] %>
+      <div class='alert block-alert alert-warn'>
+        <%= flash[:error] %>
       </div>
     <% end %>
 
