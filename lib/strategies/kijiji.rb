@@ -1,5 +1,39 @@
 module Strategies
   class Kijiji < Base
+    class << self
+      def parse_pages(index_url)
+        doc = Nokogiri::HTML( open(index_url) )
+        index_urls = [index_url].concat(doc.css(".notCurrentPage a").map do |link|
+          next unless link.text =~ /^\d+$/
+          link["href"]
+        end)
+        index_urls.each do |url|
+          log "Importing [#{url}]"
+          parse_index(url)
+        end
+      end
+
+      def parse_index(index_url)
+        doc = Nokogiri::HTML( open(index_url) )
+        doc.css("a.adLinkSB").each do |link|
+          url = link["href"]
+          parse_listing(url) unless Listing.all_of(:url => url).count > 0
+        end
+      end
+
+      def parse_listing(listing_url)
+        scrape = self.new(listing_url)
+        scrape.fetch
+        scrape.parse
+        return unless scrape.attributes[:posted_at] >= Date.today.prev_month.to_time
+        if scrape.save
+          log "Imported [#{listing_url}]"
+        end
+      rescue => e
+        log "Error scraping [#{listing_url}]: #{e.to_s}\n\t#{ e.backtrace.join("\n\t") }"
+      end
+    end
+
     def parse
       super
       parse_date_posted
