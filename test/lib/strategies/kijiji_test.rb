@@ -42,6 +42,8 @@ class Strategies::KijijiTest < ActiveSupport::TestCase
   test "parses availablility" do
     assert_equal "APRIL 1ST", sample(1).attributes[:available]
     assert_nil sample(2).attributes[:available]
+    assert_equal "April 1st", sample(8).attributes[:available]
+    assert_equal "February 16, 2012", sample(9).attributes[:available]
   end
 
   test "parses availibility date" do

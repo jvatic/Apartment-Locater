@@ -7,22 +7,19 @@ module Strategies
       end
 
       def available(string)
-        # returns immediately | <availability string> (e.g. 'for April', 'Please call', ...)
-        m = string.scan(/available\s+([^~.$!,\n]+)/i).flatten
-        a = m.select { |m| !Date::MONTHNAMES.compact.select { |n| m =~ /#{n}/i }.empty? }.first || m.select { |m| m =~ /\d/ }.first
-        b = m.first
-        m = if b.to_s =~ /immediate|available now/i || string.scan(/(?:immediate)|(?:available now)/i).first
-          'immediately'
-        elsif b.to_s.scan(/for \w+/).flatten.select { |i| !Date::MONTHNAMES.compact.select { |n| i =~ /#{n}/i }.empty? }.first
-          b.sub(/\W+$/, '')
-        elsif c = string.scan(/\b[Oo]n\b([^-~,$\n]+)/).flatten.sort_by { |i| i =~ /\d/ ? -1 : 1 }.select { |i|
-            !Date::MONTHNAMES.compact.select { |n| i =~ /#{n}/i }.empty?
-          }.first
-          c
-        elsif a
-          a
-        end
-        m.sub(/^\s+/, '').sub(/\s+$/, '') if m
+        immediate = string.scan(/immediate|available now/i).first
+        months = month_names.inject({}) { |memo, m|
+          match = string.scan(/#{m}/i).first
+          if match
+            index = string =~ /#{match}/
+            s = string.scan(/(?:(?:available(?:[ ]*for)?|on)[ ]*)((?:\d{1,2}[stndr]{2}?[ ]*)?#{m}(?:[ ]*?\d{4})?(?:[ ]*\d{1,2}[stndr]{2}?)?(?:[ ,]*?\d{4})?)/i).flatten.first
+            memo[m] = s if s
+          end
+          memo
+        }
+        match_string = months.values.join(", ") unless months.empty?
+        match_string ||= "immediately" if immediate
+        match_string
       end
 
       def parking(string)
@@ -133,6 +130,12 @@ module Strategies
       def youtube_urls(string)
         urls = string.scan(/(?:http:\/\/)?(?:www.)?youtube.com\/watch\?v=[^\s]+/i)
         urls.empty? ? nil : urls
+      end
+
+      private
+
+      def month_names
+        Date::MONTHNAMES.compact
       end
     end
   end

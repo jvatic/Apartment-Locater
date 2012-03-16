@@ -27,13 +27,13 @@ class Strategies::CraigslistTest < ActiveSupport::TestCase
   end
 
   test "parses availability" do
-    assert_equal "April 1st or earlier", sample(1).attributes[:available]
+    assert_equal "April 1st"           , sample(1).attributes[:available]
     assert_equal "immediately"         , sample(3).attributes[:available]
     assert_equal "01 April 2012"       , sample(6).attributes[:available]
-    assert_equal "for April"           , sample(7).attributes[:available]
+    assert_equal "April"               , sample(7).attributes[:available]
     assert_nil sample(10).attributes[:available]
     assert_equal "immediately"         , sample(14).attributes[:available]
-    assert_equal "May 1st"             , sample(15).attributes[:available]
+    assert_equal "May 1st, 2012"       , sample(15).attributes[:available]
   end
 
   test "parses availability date" do
