@@ -4,4 +4,10 @@ namespace :kijiji do
     # short term:
     # Strategies::Kijiji.parse_pages("http://toronto.kijiji.ca/f-immediately-real-estate-short-term-rentals-W0QQCatIdZ42QQKeywordZimmediatelyQQisSearchFormZtrue")
   end
+
+  task :destroy_removed => :environment do
+    Listing.where(:url => /kijiji/).order(:posted_at.asc).each do |listing|
+      listing.destroy if Strategies::Kijiji.removed?(listing.url)
+    end
+  end
 end

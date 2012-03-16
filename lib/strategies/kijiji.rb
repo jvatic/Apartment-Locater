@@ -32,6 +32,14 @@ module Strategies
       rescue => e
         log "Error scraping [#{listing_url}]: #{e.to_s}\n\t#{ e.backtrace.join("\n\t") }"
       end
+
+      def removed?(listing_url)
+        scrape = new(listing_url)
+        scrape.fetch
+        result = scrape.removed?
+        log "Removed [#{listing_url}]" if result
+        result
+      end
     end
 
     def parse
@@ -39,6 +47,10 @@ module Strategies
       parse_date_posted
       parse_address
       parse_image_urls
+    end
+
+    def removed?
+      @doc.text.scan(/The Ad you are looking for is no longer available/i).first ? true : false
     end
 
     private

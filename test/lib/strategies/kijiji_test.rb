@@ -76,4 +76,9 @@ class Strategies::KijijiTest < ActiveSupport::TestCase
     ], sample(1).attributes[:image_urls]
   end
 
+  test "removed?" do
+    assert sample(7).removed?
+    assert !sample(2).removed?
+  end
+
 end
