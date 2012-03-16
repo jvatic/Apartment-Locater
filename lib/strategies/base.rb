@@ -25,6 +25,7 @@ module Strategies
 
     def parse
       prepare_doc
+      return if respond_to?(:removed?) && removed?
 
       parse_title
       parse_phone
