@@ -26,6 +26,14 @@ module Strategies
           end
         end
       end
+
+      def removed?(listing_url)
+        scrape = new(listing_url)
+        scrape.fetch
+        result = scrape.removed?
+        log "Removed [#{listing_url}]" if result
+        result
+      end
     end
 
     def parse
